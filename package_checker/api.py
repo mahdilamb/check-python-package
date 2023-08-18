@@ -4,6 +4,7 @@ import inspect
 from types import NoneType
 from typing import (
     Annotated,
+    Any,
     Callable,
     Generic,
     Literal,
@@ -26,12 +27,12 @@ class TaskDetails(TypedDict):
     dependencies: Sequence[str]
 
 
-class Argument(TypedDict, Generic[T]):
+class Argument(TypedDict):
     """Details for an input."""
 
     description: str
     required: bool
-    default: T
+    default: str
 
 
 class Task(Protocol, Generic[P]):
