@@ -32,9 +32,9 @@ runs:
       run: |
         git config user.name github-actions
         git config user.email github-actions@github.com
-        git add $(git ls-files --others --exclude-standard)
-        git add $(git diff --name-only ${{ github.event.repository.default_branch }} ${{ github.ref_name }} --diff-filter=AMTR)
-        git remove $(git diff --name-only ${{ github.event.repository.default_branch }} ${{ github.ref_name }} --diff-filter=D)
+        git ls-files --others --exclude-standard | xargs git add
+        git diff --name-only ${{ github.event.repository.default_branch }} ${{ github.ref_name }} --diff-filter=AMTR | xargs git add
+        git diff --name-only ${{ github.event.repository.default_branch }} ${{ github.ref_name }} --diff-filter=D | xargs git rm
         git commit -m "Auto update files"
         git push --set-upstream origin ${{ github.ref_name }}
 
