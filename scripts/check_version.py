@@ -1,7 +1,7 @@
 import subprocess, re, pkg_resources, sys
 
 
-path, variable, default_branch = sys.argv[1:3]
+path, variable, default_branch = sys.argv[1:4]
 print(subprocess.run(f"git show {default_branch}:{path}", capture_output=True))
 version_pattern = re.compile(rf"^{variable}.*?=.*?[''\"](.*?)[''\"]", flags=re.M)
 to_version = lambda cmd: pkg_resources.parse_version(
