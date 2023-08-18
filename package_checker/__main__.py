@@ -27,14 +27,13 @@ def get_package_info():
     parser.add_argument("--default-branch")
     parser.add_argument("--current-branch")
     known,unknown = parser.parse_known_args()
-    print(known, unknown)
     with open(known.action_yaml, "rb") as fp:
         for _in, __ in yaml.safe_load(fp).get("inputs", []).items():
             parser.add_argument(
                 f"--{_in}", default=__.get("default", "-"), help=__.get("description")
             )
     more = parser.parse_args(unknown)
-    print(**{k: v for k, v in {**vars(known),**vars(more)}.items() if v not in {None, "-"}})
+    print({k: v for k, v in {**vars(known),**vars(more)}.items() if v not in {None, "-"}})
     return _api.PackageInfo(
     **{k: v for k, v in {**vars(known),**vars(more)}.items() if v not in {None, "-"}}
 )
