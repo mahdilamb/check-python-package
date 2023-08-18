@@ -33,4 +33,4 @@ runs:
           git config user.email github-actions@github.com
           git add .
           git commit -m "Update micro version"
-          git push
+           git push --set-upstream origin ${{ github.ref_name }}
