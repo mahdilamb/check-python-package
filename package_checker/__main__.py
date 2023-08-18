@@ -3,8 +3,8 @@ import argparse
 import collections.abc
 import inspect
 import subprocess
-from collections import defaultdict
 import typing
+from collections import defaultdict
 
 from loguru import logger
 

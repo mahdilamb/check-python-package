@@ -1,4 +1,4 @@
-"""isort formatter."""
+"""Isort formatter."""
 from typing import Annotated
 
 from package_checker import api, utils
