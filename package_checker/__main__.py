@@ -17,7 +17,8 @@ def import_module(path: str):
     sys.modules[module_path] = module
     spec.loader.exec_module(module)
     return module
-
+import pprint
+pprint.pprint(os.environ)
 print(os.environ["github.event.inputs.use_version_check"])
 
 package_info = _api.PackageInfo()
