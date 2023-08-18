@@ -26,11 +26,11 @@ def create_parser():
     parser.add_argument("--current-branch")
     with open("action.yaml", "rb") as fp:
         for _in,__ in yaml.safe_load(fp).get("inputs",[]).items():
-            parser.add_argument(f"--{_in}",  default=__.get("default"), help=__.get("description"), action='store_const', const=None)
+            parser.add_argument(f"--{_in}",  default=__.get("default", "-"), help=__.get("description"))
     return parser
 parser = create_parser()
 args = parser.parse_args()
-print({k:v for k,v in vars(args).items() if v is not None})
+print({k:v for k,v in vars(args).items() if v in {None,"-"}})
 for file in glob.glob(os.path.join(PACKAGE_ROOT, "*", "*.py")):
     if os.path.basename(file).startswith("_"):
         continue
