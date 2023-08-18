@@ -1,13 +1,13 @@
 """Isort formatter."""
 from typing import Annotated
 
-from package_checker import api, utils
+from package_checker import api
 
 
 @api.task(dependencies=["isort"])
 def main(
     args: Annotated[
-        list[str], utils.Args(description="The CLI args to be sent to isort.")
+        list[str], api.Input(description="The CLI args to be sent to isort.")
     ]
 ):
     """Run isort."""
