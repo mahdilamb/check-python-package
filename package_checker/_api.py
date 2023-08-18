@@ -4,9 +4,11 @@ from typing import Callable, Sequence
 
 @dataclasses.dataclass
 class PackageInfo:
-    use_isort:bool = False
-    use_black:bool = False
+    default_branch:str
+    current_branch:str
     use_version_check:bool = False
+    version_check_path:str |None=  None
+    version_check_variable:str |None=  None
 
 
 @dataclasses.dataclass(init=False)

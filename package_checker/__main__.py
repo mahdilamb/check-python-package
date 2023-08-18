@@ -9,7 +9,6 @@ import yaml
 import argparse
 
 PACKAGE_ROOT = os.path.normpath(os.path.join(__file__, "..", ".."))
-package_info = _api.PackageInfo()
 
 def import_module(path: str):
     relative_path = os.path.relpath(path, PACKAGE_ROOT)
@@ -30,7 +29,10 @@ def create_parser():
     return parser
 parser = create_parser()
 args = parser.parse_args()
-print({k:v for k,v in vars(args).items() if v in {None,"-"}})
+
+package_info = _api.PackageInfo(**{k:v for k,v in vars(args).items() if v in {None,"-"}})
+if package_info.current_branch == package_info.default_branch:
+    exit(0)
 for file in glob.glob(os.path.join(PACKAGE_ROOT, "*", "*.py")):
     if os.path.basename(file).startswith("_"):
         continue

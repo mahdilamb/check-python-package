@@ -3,24 +3,24 @@ import subprocess
 import sys
 
 import pkg_resources
-
-import package_checker._api
+from package_checker import _api
 
 
 def required(info):
     return info.use_version_check
-def check_version():
-    path, variable, default_branch = sys.argv[1:4]
 
-    version_pattern = re.compile(rf"^{variable}.*?=.*?[''\"](.*?)[''\"]", flags=re.M)
+def run(info: _api.PackageInfo):
+
+    version_pattern = re.compile(rf"^{info.version_check_variable}.*?=.*?[''\"](.*?)[''\"]", flags=re.M)
     to_version = lambda cmd: pkg_resources.parse_version(
         version_pattern.findall(subprocess.check_output(cmd).decode())[0]
     )
-    main = to_version(["git", "show", f"{default_branch}:{path}"])
-    current = to_version(["cat", path])
+    main = to_version(["git", "show", f"{info.default_branch}:{info.version_check_path}"])
+    current = to_version(["cat", info.version_check_path])
     assert (
         main < current
     ), f"Version of current commit ({current}) has not been incremented (from {main})."
+    
 
 
 def update_version():
