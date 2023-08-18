@@ -19,5 +19,5 @@ runs:
     - name: "Check version"
       if: ${{ inputs.version_path }}
       run: |
-        python ${{ github.action_path }}/scripts/check_version.py ${{ inputs.version_path }} ${{ inputs.version_variable }}
+        python ${{ github.action_path }}/scripts/check_version.py ${{ inputs.version_path }} ${{ inputs.version_variable }} ${{ github.event.repository.default_branch }}
       shell: bash
