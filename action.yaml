@@ -22,7 +22,8 @@ runs:
     - name: "Check version"
       if: ${{ inputs.version_path }}
       run: |
-        git fetch
+        git checkout -b ${{ github.event.repository.default_branch }}
+        git checkout -b ${{ github.ref_name }}
         git branch -v
         python ${{ github.action_path }}/scripts/check_version.py ${{ inputs.version_path }} ${{ inputs.version_variable }} ${{ github.event.repository.default_branch }}
       shell: bash
