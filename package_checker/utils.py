@@ -57,16 +57,3 @@ def find_tasks(
             except Exception as e:
                 logger.exception(e)
     return output
-
-
-class Args(api.Input):
-    """An input that should be parsed as an args."""
-
-    @staticmethod
-    def __call__(args: str) -> list[str]:
-        """Format the args as a list."""
-        if len(args) <= 2:
-            return [args]
-        if args[0] == args[-1] and args[0] in "'\"":
-            return re.findall(f"{args[0]}(.*?){args[0]}", args)
-        return [args]
