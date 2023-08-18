@@ -28,10 +28,9 @@ runs:
       if: ${{ failure() }}
       shell: bash
       run: |
-        git checkout -b ${{ github.ref_name }}
         python ${{ github.action_path }}/scripts/next_version.py ${{ inputs.version_path }} ${{ inputs.version_variable }} ${{ github.event.repository.default_branch }}  > ${{ inputs.version_path }}
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add .
           git commit -m "Update micro version"
-          git push --set-upstream origin version-check
+          git push
