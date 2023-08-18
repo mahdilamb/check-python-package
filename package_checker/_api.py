@@ -4,6 +4,7 @@ from typing import Callable, Sequence
 
 @dataclasses.dataclass
 class PackageInfo:
+    action_yaml:str
     default_branch: str
     current_branch: str
     use_version_check: bool = False

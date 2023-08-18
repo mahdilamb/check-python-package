@@ -23,6 +23,7 @@ def import_module(path: str):
 
 def create_parser():
     parser = argparse.ArgumentParser()
+    parser.add_argument("--action-yaml")
     parser.add_argument("--default-branch")
     parser.add_argument("--current-branch")
     with open("action.yaml", "rb") as fp:
