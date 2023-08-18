@@ -26,7 +26,7 @@ def create_parser():
     parser.add_argument("--current-branch")
     with open("action.yaml", "rb") as fp:
         for _in,__ in yaml.safe_load(fp).get("inputs",[]).items():
-            parser.add_argument(f"--{_in}", required=__.get("required", False), default=__.get("default"), help=__.get("description"), action='store_const', const=None)
+            parser.add_argument(f"--{_in}",  default=__.get("default"), help=__.get("description"), action='store_const', const=None)
     return parser
 parser = create_parser()
 args = parser.parse_args()
