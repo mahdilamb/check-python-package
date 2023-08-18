@@ -30,7 +30,7 @@ def create_parser():
 parser = create_parser()
 args = parser.parse_args()
 print(args)
-package_info = _api.PackageInfo(**{k:v for k,v in vars(args).items() if v in {None,"-"}})
+package_info = _api.PackageInfo(**{k:v for k,v in vars(args).items() if v not in {None,"-"}})
 if package_info.current_branch == package_info.default_branch:
     exit(0)
 for file in glob.glob(os.path.join(PACKAGE_ROOT, "*", "*.py")):
