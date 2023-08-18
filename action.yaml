@@ -12,7 +12,6 @@ runs:
   
   using: 'composite'
   steps:
-    
     - uses: actions/setup-python@v4
       with:
         python-version: '3.10' 
@@ -21,19 +20,16 @@ runs:
         ref: ${{ github.event.repository.default_branch }}
     - uses: actions/checkout@v3
     - name: "Check version"
-      if: ${{ github.event.repository.default_branch }} != ${{ github.ref_name }} && ${{ inputs.version_path }}
       run: |
         git fetch
         git checkout ${{ github.event.repository.default_branch }}
         git checkout ${{ github.ref_name }}
-        git branch -v
         python ${{ github.action_path }}/scripts/check_version.py ${{ inputs.version_path }} ${{ inputs.version_variable }} ${{ github.event.repository.default_branch }}
       shell: bash
     - name: "Update version"
       if: ${{ failure() }}
       shell: bash
       run: |
-        git branch -v
         python ${{ github.action_path }}/scripts/next_version.py ${{ inputs.version_path }} ${{ inputs.version_variable }} ${{ github.event.repository.default_branch }}
           git config user.name github-actions
           git config user.email github-actions@github.com
