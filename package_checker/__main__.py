@@ -18,9 +18,8 @@ def import_module(path: str):
     spec.loader.exec_module(module)
     return module
 import pprint
-pprint.pprint(os.environ)
-print(os.environ["github.event.inputs.use_version_check"])
-
+for name, value in os.environ.items():
+    print("{0}: {1}".format(name, value))
 package_info = _api.PackageInfo()
 for file in glob.glob(os.path.join(PACKAGE_ROOT, "*", "*.py")):
     if os.path.basename(file).startswith("_"):
