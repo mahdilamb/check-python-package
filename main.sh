@@ -13,8 +13,8 @@ git checkout $CURRENT_BRANCH
 REQUIRES_CHANGE=$(python $SCRIPT_PATH/scripts/check_version.py $VERSION_PATH $VERSION_VARIABLE $DEFAULT_BRANCH)
 if [ $? ]; then
     echo "Updating version number"
-    python $SCRIPT_PATH/scripts/next_version.py $VERSION_PATH} $VERSION_VARIABLE $DEFAULT_BRANCH
-    1 git config user.name github-actions
+    python $SCRIPT_PATH/scripts/next_version.py $VERSION_PATH $VERSION_VARIABLE $DEFAULT_BRANCH
+    git config user.name github-actions
     git config user.email github-actions@github.com
     git add $VERSION_PATH
     git commit -m "Update micro version"
