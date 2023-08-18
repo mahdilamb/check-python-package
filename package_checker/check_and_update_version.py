@@ -11,6 +11,8 @@ def required(info):
 
 
 def run(info: _api.PackageInfo):
+    subprocess.check_output(["git","checkout",info.default_branch ])
+    subprocess.check_output(["git","checkout",info.current_branch ])
     version_pattern = re.compile(
         rf"^{info.version_check_variable}.*?=.*?['\"](.*?)['\"]", flags=re.M
     )
