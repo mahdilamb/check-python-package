@@ -1,10 +1,10 @@
 """Abstract interfaces for the package checker."""
 import dataclasses
 import inspect
+import typing
 from types import NoneType
 from typing import (
     Annotated,
-    Any,
     Callable,
     Generic,
     Literal,
@@ -40,6 +40,33 @@ class Task(Protocol, Generic[P]):
 
     __task_details__: TaskDetails
 
+    @typing.overload
+    def __call__(
+        self,
+        *args: P.args,
+        **kwargs: P.kwargs,
+    ):
+        """Run the task."""
+
+    @typing.overload
+    def __call__(
+        self,
+        default_branch: str,
+        *args: P.args,
+        **kwargs: P.kwargs,
+    ):
+        """Run the task."""
+
+    @typing.overload
+    def __call__(
+        self,
+        current_branch: str,
+        *args: P.args,
+        **kwargs: P.kwargs,
+    ):
+        """Run the task."""
+
+    @typing.overload
     def __call__(
         self,
         default_branch: str,
@@ -85,7 +112,7 @@ class Tasks:
         if __format_spec == "cli_args":
             inputs = self.inputs()
             cli_args = " ".join(
-                f"--{input}=${{{{ inputs.{input} }}}}" for input in inputs.keys()
+                f"--{input} ${{{{ inputs.{input} }}}}" for input in inputs.keys()
             )
             return cli_args
         return super().__format__(__format_spec)
@@ -102,6 +129,10 @@ class Tasks:
                 or f"Whether to run the {name} task.",
             }
             for kwarg, annotation in task.__annotations__.items():
+                if (not hasattr(annotation, "__origin__")) or typing.get_origin(
+                    annotation
+                ) != Annotated:
+                    annotation = Annotated[annotation, Input()]
                 if kwarg in ("default_branch", "current_branch"):
                     continue
 
@@ -113,17 +144,16 @@ class Tasks:
                     default = "-"
                 else:
                     default = default
-                output[f"{name}_{kwarg}"] = {
-                    "description": ""
-                    if not annotation.__origin__ != Annotated
-                    else annotation.__metadata__[0].description,
-                    "required": not any(
-                        a
-                        for annotation in annotation.__args__
-                        for a in getattr(annotation, "__args__", (annotation,))
-                        if a is NoneType
-                    ),
-                    "default": default,
-                }
-
+                output[f"{name}_{kwarg}"] = Argument(
+                    {
+                        "description": annotation.__metadata__[0].description,
+                        "required": not any(
+                            a
+                            for annotation in annotation.__args__
+                            for a in getattr(annotation, "__args__", (annotation,))
+                            if a is NoneType
+                        ),
+                        "default": default,
+                    }
+                )
         return output
