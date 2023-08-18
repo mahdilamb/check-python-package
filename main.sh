@@ -1,4 +1,5 @@
 #!/bin/bash
+pip install pyyaml
 SCRIPT_PATH="$(dirname "$(readlink -fm "$0")")"
 
 VERSION_PATH=$1
