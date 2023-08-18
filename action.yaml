@@ -1,30 +1,55 @@
-name: "Check python package"
-description: "Check a python package and commit changes for quality"
+name: "Run python black code formatter"
+description: "Run the black formatter on your codebase to improve code review experience."
+author: "DataDog"
 inputs:
-  version_path:
+  additional_args:
+    description: "Black additional input arguments."
     required: false
-    description: The path to file that contains the version string.
-  version_variable:
+    default: ""
+  fail_on_error:
+    description: |
+      Exit code when black formatting errors are found [true, false]. Defaults to 'true'.
     required: false
-    description: The name of the version variable.
-    default: __version__
+    default: "true"
+  main_branch:
+    description: |
+      Main branch of the repository to speed up incremental diff
+    required: false
+    default: "main"
+  quiet_mode:
+    description: |
+      (--quiet) Don't emit non-error messages to stderr. Errors are still emitted; silence 
+        those with 2>/dev/null
+    required: false
+    default: "false"
+  print_diff_mode:
+    description: |
+      (--diff) Don't write the files back, just output a diff for each file on stdout.
+    required: false
+    default: "false"
+  check_mode:
+    description: |
+      (--check) Don't write the files back, just return the status. Return code 0 means nothing 
+        would change. Return code 1 means some files would be reformatted. Return code 123 means
+        there was an internal error.
+    required: false
+    default: "false"
+  only_changed_files:
+    description: |
+      Turn on if you only want to check changed files instead of all files.
+    required: false
+    default: "false"
+  base_commit:
+    description: |
+      Sha of the commit to compare files to.
+    required: false
+    default: ""
+outputs:
+  is_formatted:
+    description: "Whether the files were formatted using the black formatter."
+branding:
+  color: "black"
+  icon: "check-circle"
 runs:
-  using: 'composite'
-  steps:
-
-    - uses: actions/setup-python@v4
-      with:
-        python-version: '3.10' 
-    - uses: actions/checkout@v3
-      with:
-        path: ${{ github.event.repository.default_branch }}  
-    - name: "test"
-      shell: bash
-      run: |
-        cd ${{ github.workspace }} && echo $(ls -al)
-    - name: "Check version"
-      if: ${{ inputs.version_path }}
-      
-      run: |
-        python ${{ github.action_path }}/scripts/check_version.py ${{ inputs.version_path }} ${{ inputs.version_variable }} ${{ github.event.repository.default_branch }}
-      shell: bash
+  using: "docker"
+  image: "Dockerfile"
