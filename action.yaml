@@ -20,6 +20,7 @@ runs:
         ref: ${{ github.event.repository.default_branch }}
     - uses: actions/checkout@v3
     - name: "Check version"
+      if: ${{ github.event.repository.default_branch }} != ${{ github.ref_name }}
       run: |
         git fetch
         git checkout ${{ github.event.repository.default_branch }}
