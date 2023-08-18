@@ -7,8 +7,9 @@ import sys
 from package_checker import _api
 import yaml
 import argparse
+import package_checker
 
-PACKAGE_ROOT = os.path.normpath(os.path.join(__file__, "..", ".."))
+PACKAGE_ROOT = os.path.normpath(os.path.join(package_checker.__file__, "..", ".."))
 
 
 def import_module(path: str):
@@ -34,9 +35,7 @@ def get_package_info():
             )
     more = vars(parser.parse_args(unknown))
     more.update(vars(known))
-    print(more)
     args ={k: v for k, v in more.items() if v not in {None, "-"}}
-    print(args)
     return _api.PackageInfo(
     **args
 )
