@@ -6,9 +6,11 @@ from package_checker import api, utils
 
 @api.task(dependencies=["black"])
 def main(
-    args: Annotated[str, api.Input(description="The CLI args to be sent to black.")]
+    args: Annotated[
+        list[str], utils.Args(description="The CLI args to be sent to black.")
+    ]
 ):
     """Run black."""
     import black
 
-    black.main(utils.format_args(args))
+    black.main(args)

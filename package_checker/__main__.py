@@ -1,8 +1,10 @@
 """CLI entry point for the package checker."""
 import argparse
+import collections.abc
 import inspect
 import subprocess
 from collections import defaultdict
+import typing
 
 from loguru import logger
 
@@ -30,16 +32,28 @@ def parser_arguments():
     parser.add_argument("--action-yaml")
     inputs = api.Tasks(**TASK_DICT).inputs()
     groups: dict[str, list[str]] = defaultdict(list)
-    for name in TASK_DICT.keys():
+    for name, task in TASK_DICT.items():
         group = parser.add_argument_group(name)
         for arg, details in inputs.items():
             if (arg == "use_" + name) or arg.startswith(name):
+                multiple = False
+                if (
+                    annotation := task.__annotations__.get(arg[len(name) + 1 :])
+                ) and typing.get_origin(annotation) == typing.Annotated:
+                    multiple = hasattr(
+                        annotation.__args__[0], "__origin__"
+                    ) and annotation.__args__[0].__origin__ in (
+                        list,
+                        tuple,
+                        typing.Sequence,
+                    )
                 group.add_argument(
                     f"--{arg}",
                     help=details.get("description"),
                     default=details.get("default", "-"),
                     required=inputs["use_" + name]["required"]
                     and details.get("required", False),
+                    nargs="?" if not multiple else "+",
                 )
                 groups[name].append(arg)
 
