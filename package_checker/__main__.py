@@ -34,7 +34,7 @@ def get_package_info():
     more.update(vars(known))
     args = {k: v for k, v in more.items() if v not in {None, "-"}}
     return _api.PackageInfo(**args), os.path.normpath(
-        os.path.join(known.action_yaml, "..", "..")
+        os.path.join(known.action_yaml,  "..")
     )
 
 
