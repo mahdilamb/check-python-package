@@ -19,7 +19,7 @@ runs:
     - name: "test"
       shell: bash
       run: |
-        git branch -v 
+        git show ${{ github.event.repository.default_branch }}:${{ inputs.version_path }}
     - name: "Check version"
       if: ${{ inputs.version_path }}
       
