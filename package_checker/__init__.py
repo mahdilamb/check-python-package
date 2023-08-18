@@ -1,1 +1,2 @@
-__version__ = "0.0.1"
+"""Package information for the package checker."""
+__version__ = "0.0.2"
