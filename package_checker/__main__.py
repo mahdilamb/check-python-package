@@ -32,10 +32,13 @@ def get_package_info():
             parser.add_argument(
                 f"--{_in}", default=__.get("default", "-"), help=__.get("description")
             )
-    more = parser.parse_args(unknown)
-    print({k: v for k, v in {**vars(known),**vars(more)}.items() if v not in {None, "-"}})
+    more = vars(parser.parse_args(unknown))
+    more.update(vars(known))
+    print(more)
+    args ={k: v for k, v in more.items() if v not in {None, "-"}}
+    print(args)
     return _api.PackageInfo(
-    **{k: v for k, v in {**vars(known),**vars(more)}.items() if v not in {None, "-"}}
+    **args
 )
 
 
