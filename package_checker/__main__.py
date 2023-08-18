@@ -18,6 +18,7 @@ def import_module(path: str):
     spec.loader.exec_module(module)
     return module
 
+print(os.environ["github.event.inputs.use_version_check"])
 
 package_info = _api.PackageInfo()
 for file in glob.glob(os.path.join(PACKAGE_ROOT, "*", "*.py")):
