@@ -1,6 +1,7 @@
 """Abstract interfaces for the package checker."""
 import dataclasses
 import inspect
+import typing
 from types import NoneType
 from typing import (
     Annotated,
@@ -40,6 +41,33 @@ class Task(Protocol, Generic[P]):
 
     __task_details__: TaskDetails
 
+    @typing.overload
+    def __call__(
+        self,
+        *args: P.args,
+        **kwargs: P.kwargs,
+    ):
+        """Run the task."""
+
+    @typing.overload
+    def __call__(
+        self,
+        default_branch: str,
+        *args: P.args,
+        **kwargs: P.kwargs,
+    ):
+        """Run the task."""
+
+    @typing.overload
+    def __call__(
+        self,
+        current_branch: str,
+        *args: P.args,
+        **kwargs: P.kwargs,
+    ):
+        """Run the task."""
+
+    @typing.overload
     def __call__(
         self,
         default_branch: str,

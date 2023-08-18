@@ -1,7 +1,7 @@
 """Black formatter."""
 from typing import Annotated
 
-from package_checker import api
+from package_checker import api, utils
 
 
 @api.task(dependencies=["black"])
@@ -11,4 +11,9 @@ def main(
     """Run black."""
     import black
 
-    black.main([args])
+    black.main(utils.format_args(args))
+
+
+(main("package_checker"))
+(main("'package_checker' 'tests'"))
+(main('"package_checker" "tests"'))
