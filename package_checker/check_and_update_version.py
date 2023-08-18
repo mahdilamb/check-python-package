@@ -23,6 +23,7 @@ def run(info: _api.PackageInfo):
         ["git", "show", f"{info.default_branch}:{info.version_check_path}"]
     )
     current = to_version(["cat", info.version_check_path])
+    print(main,current)
     assert (
         main < current
     ), f"Version of current commit ({current}) has not been incremented (from {main})."
