@@ -6,6 +6,7 @@ VERSION_VARIABLE=$2
 DEFAULT_BRANCH=$3
 CURRENT_BRANCH=$4
 
+
 git fetch
 git checkout $DEFAULT_BRANCH
 git checkout $CURRENT_BRANCH
