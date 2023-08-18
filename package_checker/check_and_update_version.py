@@ -23,8 +23,9 @@ def run(info: _api.PackageInfo):
         ["git", "show", f"{info.default_branch}:{info.version_check_path}"]
     )
     current = to_version(["cat", info.version_check_path])
-    next_version = re.sub(r"^(\d+\.\d+)\.\d*(.*)$", rf"\1.{main.micro+1}\2", str(main))
-    if main < current:
+    
+    if main >= current:
+        next_version = re.sub(r"^(\d+\.\d+)\.\d*(.*)$", rf"\1.{main.micro+1}\2", str(main))
         with open(info.version_check_path, "r") as fp:
             text = fp.read()
             with open(info.version_check_path, "w") as fp:
