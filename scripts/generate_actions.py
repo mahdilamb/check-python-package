@@ -21,7 +21,7 @@ DATA = {
             },
             {
                 "name": "Run package checker",
-                "run": """export PYTHONPATH=${{ github.action_path }}:$PYTHONPATH && pip install pyyaml && python -m package_checker --default-branch=${{ github.event.repository.default_branch }} --current-branch=${{ github.ref_name }} --action-yaml=${{ github.action_path }}/action.yaml """
+                "run": """export PYTHONPATH=${{ github.action_path }}:$PYTHONPATH && pip install ${{ github.action_path }} && python -m package_checker --default-branch=${{ github.event.repository.default_branch }} --current-branch=${{ github.ref_name }} --action-yaml=${{ github.action_path }}/action.yaml """
                 + f"{INPUTS:cli_args}",
                 "shell": "bash",
             },
