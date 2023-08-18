@@ -12,8 +12,3 @@ def main(
     import black
 
     black.main(utils.format_args(args))
-
-
-(main("package_checker"))
-(main("'package_checker' 'tests'"))
-(main('"package_checker" "tests"'))
