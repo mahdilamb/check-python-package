@@ -1,0 +1,22 @@
+name: "Check python package"
+description: "Check a python package and commit changes for quality"
+inputs:
+  version_path:
+    required: false
+    description: The path to file that contains the version string.
+  version_variable:
+    required: false
+    description: The name of the version variable.
+    default: __version__
+runs:
+  using: 'composite'
+  steps:
+    - name: Install Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'  
+    - name: "Check version"
+      if: ${{ inputs.version_path }}
+      run: |
+        python scripts/check_version.py ${{ inputs.version_path }} ${{ inputs.version_variable }}
+      shell: bash
