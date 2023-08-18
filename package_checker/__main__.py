@@ -21,24 +21,24 @@ def import_module(path: str):
     return module
 
 
-def create_parser():
+def get_package_info():
     parser = argparse.ArgumentParser()
     parser.add_argument("--action-yaml")
     parser.add_argument("--default-branch")
     parser.add_argument("--current-branch")
-    with open("action.yaml", "rb") as fp:
+    known,unknown = parser.parse_known_args()
+    with open(known.action_yaml, "rb") as fp:
         for _in, __ in yaml.safe_load(fp).get("inputs", []).items():
             parser.add_argument(
                 f"--{_in}", default=__.get("default", "-"), help=__.get("description")
             )
-    return parser
-
-
-parser = create_parser()
-args = parser.parse_args()
-package_info = _api.PackageInfo(
-    **{k: v for k, v in vars(args).items() if v not in {None, "-"}}
+    more = parser.parse_args()
+    return _api.PackageInfo(
+    **{k: v for k, v in {**vars(unknown),**vars(more)}.items() if v not in {None, "-"}}
 )
+
+
+package_info = get_package_info()
 if package_info.current_branch == package_info.default_branch:
     exit(0)
 for file in glob.glob(os.path.join(PACKAGE_ROOT, "*", "*.py")):
