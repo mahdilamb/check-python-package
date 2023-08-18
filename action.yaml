@@ -11,13 +11,13 @@ inputs:
 runs:
   using: 'composite'
   steps:
+
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.10' 
     - uses: actions/checkout@v3
       with:
-        path: main
-    - name: Install Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'  
+        path: ${{ github.event.repository.default_branch }}  
     - name: "test"
       shell: bash
       run: |
