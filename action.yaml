@@ -1,10 +1,14 @@
 name: "Check python package"
 description: "Check a python package and commit changes for quality"
 inputs:
-  version_path:
+  use_version_check:
+    required: false
+    default: "false"
+    description: "Whether to use the version check."
+  version_check_path:
     required: false
     description: The path to file that contains the version string.
-  version_variable:
+  version_check_variable:
     required: false
     description: The name of the version variable.
     default: __version__
