@@ -24,15 +24,12 @@ runs:
         git fetch
         git checkout ${{ github.event.repository.default_branch }}
         git checkout ${{ github.ref_name }}
-        python ${{ github.action_path }}/scripts/check_version.py ${{ inputs.version_path }} ${{ inputs.version_variable }} ${{ github.event.repository.default_branch }}
+        python ${{ github.action_path }}/scripts/check_version.py ${{ inputs.version_path }} ${{ inputs.version_variable }} ${{ github.event.repository.default_branch }} || $(python ${{ github.action_path }}/scripts/next_version.py ${{ inputs.version_path }} ${{ inputs.version_variable }} ${{ github.event.repository.default_branch }} && git config user.name github-actions &&
+          git config user.email github-actions@github.com &&
+          git add . &&
+          git commit -m "Update micro version" &&
+          git push --set-upstream origin ${{ github.ref_name }})
       shell: bash
-    - name: "Update version"
-      if: ${{ failure() }}
-      shell: bash
-      run: |
-        python ${{ github.action_path }}/scripts/next_version.py ${{ inputs.version_path }} ${{ inputs.version_variable }} ${{ github.event.repository.default_branch }}
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git add .
-          git commit -m "Update micro version"
-          git push --set-upstream origin ${{ github.ref_name }}
+
+        
+          
