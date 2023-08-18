@@ -12,6 +12,8 @@ to_version = lambda cmd: pkg_resources.parse_version(
 main = to_version(["git", "show", f"{default_branch}:{path}"])
 next_version = re.sub(r"^(\d+\.\d+)\.\d*(.*)$",fr"\1.{main.micro+1}\2", str(main))
 with open(path, "r") as fp:
+    text = fp.read()
+    print(version_pattern.sub(rf'\1{next_version}\3',text, ))
     for line in fp.readlines():
         if line.startswith(variable):
             line = list(version_pattern.findall(line)[0])
