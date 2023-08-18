@@ -21,7 +21,7 @@ runs:
     - name: "test"
       shell: bash
       run: |
-        cd ${{ github.workspace }}/runner && echo $(ls -al)
+        echo $(pwd) && echo $(ls -al)
     - name: "Check version"
       if: ${{ inputs.version_path }}
       
