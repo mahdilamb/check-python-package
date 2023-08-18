@@ -9,11 +9,11 @@ import yaml
 import argparse
 import package_checker
 
-PACKAGE_ROOT = os.path.normpath(os.path.join(package_checker.__file__, "..", ".."))
 
 
-def import_module(path: str):
-    relative_path = os.path.relpath(path, PACKAGE_ROOT)
+
+def import_module(path: str, root):
+    relative_path = os.path.relpath(path, root)
     module_path = relative_path.replace(os.path.sep, ".")[:-3]
     spec = importlib.util.spec_from_file_location(module_path, relative_path)
     module = importlib.util.module_from_spec(spec)
@@ -23,11 +23,11 @@ def import_module(path: str):
 
 
 def get_package_info():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser()``
     parser.add_argument("--action-yaml")
     parser.add_argument("--default-branch")
     parser.add_argument("--current-branch")
-    known,unknown = parser.parse_known_args()
+    known, unknown = parser.parse_known_args()
     with open(known.action_yaml, "rb") as fp:
         for _in, __ in yaml.safe_load(fp).get("inputs", []).items():
             parser.add_argument(
@@ -35,20 +35,18 @@ def get_package_info():
             )
     more = vars(parser.parse_args(unknown))
     more.update(vars(known))
-    args ={k: v for k, v in more.items() if v not in {None, "-"}}
-    return _api.PackageInfo(
-    **args
-)
+    args = {k: v for k, v in more.items() if v not in {None, "-"}}
+    return _api.PackageInfo(**args),  os.path.normpath(os.path.join(known.action_yaml, "..", ".."))
 
 
-package_info = get_package_info()
+package_info,PACKAGE_ROOT = get_package_info()
 if package_info.current_branch == package_info.default_branch:
     exit(0)
 for file in glob.glob(os.path.join(PACKAGE_ROOT, "*", "*.py")):
     if os.path.basename(file).startswith("_"):
         continue
 
-    module = import_module(file)
+    module = import_module(file, PACKAGE_ROOT)
     task = _api.Task(**vars(module))
     if not task.required(package_info):
         continue
