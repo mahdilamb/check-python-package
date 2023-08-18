@@ -1,5 +1,7 @@
 import subprocess, re, pkg_resources, sys
 
+print(sys.argv)
+
 path, variable = sys.argv[1:3]
 version_pattern = re.compile(rf"^{variable}.*?=.*?[''\"](.*?)[''\"]", flags=re.M)
 to_version = lambda cmd: pkg_resources.parse_version(
