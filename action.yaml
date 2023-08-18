@@ -33,7 +33,7 @@ runs:
         git status
         git config user.name github-actions;
         git config user.email github-actions@github.com;
-        [ -e $( git status -s ) ] || $(git add . && git commit -m "Auto update files" && git push --set-upstream origin ${{ github.ref_name }} )
+        $(git add . && git commit -m "Auto update files" && git push --set-upstream origin ${{ github.ref_name }} ) || echo "Nothing to change"
 
 
       shell: bash
