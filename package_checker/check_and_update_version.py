@@ -17,7 +17,7 @@ def run(info: _api.PackageInfo):
         rf"^({info.version_check_variable}.*?=.*?['\"])(.*?)(['\"].*)$", flags=re.M
     )
     to_version = lambda cmd: pkg_resources.parse_version(
-        version_pattern.findall(subprocess.check_output(cmd).decode())[0]
+        version_pattern.findall(subprocess.check_output(cmd).decode())[0][1]
     )
     main = to_version(
         ["git", "show", f"{info.default_branch}:{info.version_check_path}"]
