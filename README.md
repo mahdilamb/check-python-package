@@ -2,3 +2,5 @@
 
 Supports:
 * Auto increment micro version
+* Format with black
+* Format with isort
