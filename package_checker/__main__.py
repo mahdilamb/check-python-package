@@ -7,9 +7,6 @@ import sys
 from package_checker import _api
 import yaml
 import argparse
-import package_checker
-
-
 
 
 def import_module(path: str, root):
@@ -23,7 +20,7 @@ def import_module(path: str, root):
 
 
 def get_package_info():
-    parser = argparse.ArgumentParser()``
+    parser = argparse.ArgumentParser()
     parser.add_argument("--action-yaml")
     parser.add_argument("--default-branch")
     parser.add_argument("--current-branch")
@@ -36,10 +33,12 @@ def get_package_info():
     more = vars(parser.parse_args(unknown))
     more.update(vars(known))
     args = {k: v for k, v in more.items() if v not in {None, "-"}}
-    return _api.PackageInfo(**args),  os.path.normpath(os.path.join(known.action_yaml, "..", ".."))
+    return _api.PackageInfo(**args), os.path.normpath(
+        os.path.join(known.action_yaml, "..", "..")
+    )
 
 
-package_info,PACKAGE_ROOT = get_package_info()
+package_info, PACKAGE_ROOT = get_package_info()
 if package_info.current_branch == package_info.default_branch:
     exit(0)
 for file in glob.glob(os.path.join(PACKAGE_ROOT, "*", "*.py")):
