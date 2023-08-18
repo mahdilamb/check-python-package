@@ -11,6 +11,7 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    - uses: actions/checkout@v3
     - name: Install Python
       uses: actions/setup-python@v4
       with:
@@ -18,5 +19,5 @@ runs:
     - name: "Check version"
       if: ${{ inputs.version_path }}
       run: |
-        python scripts/check_version.py ${{ inputs.version_path }} ${{ inputs.version_variable }}
+        python ${{ github.action_path }}/scripts/check_version.py ${{ inputs.version_path }} ${{ inputs.version_variable }}
       shell: bash
