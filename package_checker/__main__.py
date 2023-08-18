@@ -12,7 +12,7 @@ import argparse
 def import_module(path: str, root):
     relative_path = os.path.relpath(path, root)
     module_path = relative_path.replace(os.path.sep, ".")[:-3]
-    spec = importlib.util.spec_from_file_location(module_path, relative_path)
+    spec = importlib.util.spec_from_file_location(module_path, path)
     module = importlib.util.module_from_spec(spec)
     sys.modules[module_path] = module
     spec.loader.exec_module(module)
