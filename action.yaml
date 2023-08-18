@@ -21,7 +21,7 @@ runs:
     - name: "test"
       shell: bash
       run: |
-        echo $(cd ${{ github.workspace }} && git show ${{ github.event.repository.default_branch }}:${{ inputs.version_path }})
+        echo $(cd ${{ github.workspace }} && ls -al)
     - name: "Check version"
       if: ${{ inputs.version_path }}
       
