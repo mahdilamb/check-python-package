@@ -30,7 +30,7 @@ runs:
       shell: bash
     - name: Commit changed files
       run: |
-        [ -e $(git diff ${{ github.event.repository.default_branch }} ${{ github.ref_name }}) ] || $(
+        [ -e $( git diff --name-only ${{ github.event.repository.default_branch }} ${{ github.ref_name }} ) ] || $(
         git config user.name github-actions;
         git config user.email github-actions@github.com;
         git add .;
