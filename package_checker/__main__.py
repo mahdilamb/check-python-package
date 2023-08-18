@@ -1,54 +1,68 @@
-import glob
-import importlib.util
-import os
-import subprocess
-import sys
-
-from package_checker import _api
-import yaml
+"""CLI entry point for the package checker."""
 import argparse
+import inspect
+import subprocess
+from collections import defaultdict
+
+from loguru import logger
+
+from package_checker import api, utils
+
+TASK_DICT = utils.find_tasks()
 
 
-def import_module(path: str, root):
-    relative_path = os.path.relpath(path, root)
-    module_path = relative_path.replace(os.path.sep, ".")[:-3]
-    spec = importlib.util.spec_from_file_location(module_path, path)
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[module_path] = module
-    spec.loader.exec_module(module)
-    return module
+def split_arguments(info, groups):
+    """Split the namespace by groups."""
+    shared = vars(info)
+    grouped: dict[str, dict[str, str]] = defaultdict(dict)
+    for group, args in groups.items():
+        for arg in args:
+            if (val := shared.pop(arg)) not in (None, "-"):
+                grouped[group][arg] = val
+    return shared, dict(grouped)
 
 
-def get_package_info():
+def parser_arguments():
+    """Parse arguments and return the namespace and groupings."""
     parser = argparse.ArgumentParser()
-    parser.add_argument("--action-yaml")
     parser.add_argument("--default-branch")
     parser.add_argument("--current-branch")
-    known, unknown = parser.parse_known_args()
-    with open(known.action_yaml, "rb") as fp:
-        for _in, __ in yaml.safe_load(fp).get("inputs", []).items():
-            parser.add_argument(
-                f"--{_in}", default=__.get("default", "-"), help=__.get("description")
-            )
-    more = vars(parser.parse_args(unknown))
-    more.update(vars(known))
-    args = {k: v for k, v in more.items() if v not in {None, "-"}}
-    return _api.PackageInfo(**args), os.path.normpath(
-        os.path.join(known.action_yaml, "..")
-    )
+    parser.add_argument("--action-yaml")
+    inputs = api.Tasks(**TASK_DICT).inputs()
+    groups: dict[str, list[str]] = defaultdict(list)
+    for name in TASK_DICT.keys():
+        group = parser.add_argument_group(name)
+        for arg, details in inputs.items():
+            if (arg == "use_" + name) or arg.startswith(name):
+                group.add_argument(
+                    f"--{arg}",
+                    help=details.get("description"),
+                    default=details.get("default", "-"),
+                    required=inputs["use_" + name]["required"]
+                    and details.get("required", False),
+                )
+                groups[name].append(arg)
+
+    return parser.parse_args(), dict(groups)
 
 
-package_info, PACKAGE_ROOT = get_package_info()
-if package_info.current_branch == package_info.default_branch:
+shared, args = split_arguments(*parser_arguments())
+actions_yaml = shared.pop("action_yaml")
+
+if shared["current_branch"] == shared["default_branch"]:
     exit(0)
-for file in glob.glob(os.path.join(PACKAGE_ROOT, "*", "*.py")):
-    if os.path.basename(file).startswith("_"):
+for name, task in TASK_DICT.items():
+    task_args = args[name]
+    if task_args.pop("use_" + name) == "false":
         continue
+    task_arg_values = {k[len(name) + 1 :]: v for k, v in task_args.items()}
+    task_args = inspect.getfullargspec(task).args
+    shared_args = {k: v for k, v in shared.items() if k in task_args}
+    all_args = {**task_arg_values, **shared_args}
 
-    module = import_module(file, PACKAGE_ROOT)
-    task = _api.Task(**vars(module))
-    if not task.required(package_info):
-        continue
-    if task.dependencies:
-        subprocess.call(["pip", "install"] + list(task.dependencies))
-    task.run(package_info)
+    if dependencies := task.__task_details__.get("dependencies", None):
+        subprocess.call(["pip", "install"] + list(dependencies))
+    try:
+        task(**all_args)
+    except Exception as e:
+        logger.exception(e)
