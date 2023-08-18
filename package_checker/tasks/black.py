@@ -11,4 +11,4 @@ def main(
     """Run black."""
     import black
 
-    black.main(args)
+    black.main([args])
