@@ -107,16 +107,6 @@ class Tasks:
         """Create a new Tasks object."""
         self.__tasks = tasks
 
-    def __format__(self, __format_spec: str | Literal["cli_args"]) -> str:
-        """Format the inputs of the tasks."""
-        if __format_spec == "cli_args":
-            inputs = self.inputs()
-            cli_args = " ".join(
-                f"--{input} ${{{{ inputs.{input} }}}}" for input in inputs.keys()
-            )
-            return cli_args
-        return super().__format__(__format_spec)
-
     def inputs(self) -> dict[str, Argument]:
         """Get the inputs to the tasks as a dictionary."""
         NONE = type("NONE", (), {"default": inspect._empty})()
@@ -157,3 +147,13 @@ class Tasks:
                     }
                 )
         return output
+
+    def cli_args(
+        self,
+    ) -> str:
+        """Get the CLI args."""
+        inputs = self.inputs()
+        cli_args = " ".join(
+            f"--{input} ${{{{ inputs.{input} }}}}" for input in inputs.keys()
+        )
+        return cli_args
