@@ -2,6 +2,7 @@
 import argparse
 import collections.abc
 import inspect
+import json
 import subprocess
 import typing
 from collections import defaultdict
@@ -28,7 +29,7 @@ def split_arguments(info, groups):
 def parser_arguments():
     """Parse arguments and return the namespace and groupings."""
     parser = argparse.ArgumentParser()
-    parser.add_argument("--github-json")
+    parser.add_argument("--github-json", type=json.dumps)
     inputs = api.Tasks(**TASK_DICT).inputs()
     groups: dict[str, list[str]] = defaultdict(list)
     for name, task in TASK_DICT.items():
