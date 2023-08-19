@@ -5,6 +5,7 @@ import json
 import subprocess
 import typing
 from collections import defaultdict
+from typing import Annotated, Any, Sequence
 
 from loguru import logger
 
@@ -21,7 +22,7 @@ def split_arguments(info, groups):
         for arg in args:
             if (val := shared.pop(arg)) not in (None, "-"):
                 grouped[group][arg] = val
-    return api.Github.model_validate(shared['github_json']), dict(grouped)
+    return api.Github.model_validate(shared["github_json"]), dict(grouped)
 
 
 def parser_arguments():
@@ -37,13 +38,13 @@ def parser_arguments():
                 multiple = False
                 if (
                     annotation := task.__annotations__.get(arg[len(name) + 1 :])
-                ) and typing.get_origin(annotation) == typing.Annotated:
+                ) and typing.get_origin(annotation) == Annotated:
                     multiple = hasattr(
                         annotation.__args__[0], "__origin__"
                     ) and annotation.__args__[0].__origin__ in (
                         list,
                         tuple,
-                        typing.Sequence,
+                        Sequence,
                     )
                 group.add_argument(
                     f"--{arg}",
@@ -66,10 +67,10 @@ for name, task in TASK_DICT.items():
     task_args = args[name]
     if task_args.pop("use_" + name) == "false":
         continue
-    task_arg_values = {k[len(name) + 1 :]: v for k, v in task_args.items()}
+    all_args: dict[str, Any] = {k[len(name) + 1 :]: v for k, v in task_args.items()}
     task_args = inspect.getfullargspec(task).args
-    shared_args = {k: v for k, v in github.items() if k in task_args}
-    all_args = {**task_arg_values, **shared_args}
+    if "github_model" in task_args:
+        all_args["github_model"] = github
 
     if dependencies := task.__task_details__.get("dependencies", None):
         subprocess.call(["pip", "install"] + list(dependencies))

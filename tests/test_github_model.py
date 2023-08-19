@@ -1,5 +1,6 @@
-"""Test that we can load Github event from json"""
+"""Test that we can load Github event from json."""
 import json
+
 from package_checker import api
 
 
@@ -84,6 +85,11 @@ def github_model_test():
 				"action_status": "success",
 			}"""
     print(api.Github.model_validate(json.loads(json_string)))
-if __name__=="__main__":
-    import sys,pytest
-    sys.exit(pytest.main(["-v", "-s"]+sys.argv))
+
+
+if __name__ == "__main__":
+    import sys
+
+    import pytest
+
+    sys.exit(pytest.main(["-v", "-s"] + sys.argv))
