@@ -22,8 +22,8 @@ DATA = {
             },
             {
                 "name": "Configure git",
-                "run": """git config user.name github-actions;
-git config user.email github-actions@github.com;""",
+                "run": """git config user.name github-actions && git config user.email github-actions@github.com""",
+                "shell": "bash",
             },
             {
                 "name": "Run package checker",
