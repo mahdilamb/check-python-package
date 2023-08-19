@@ -30,7 +30,7 @@ git config user.email github-actions@github.com;""",
                 "run": """git checkout ${{ github.event.repository.default_branch }}
 git checkout ${{ github.ref_name }}
 export PYTHONPATH=${{ github.action_path }}:$PYTHONPATH && pip install ${{ github.action_path }} && python -m package_checker --github-action-json='{ ${{ toJSON(github) }} }' """
-                + f"{INPUTS:cli_args}",
+                + f"{INPUTS.cli_args()}",
                 "shell": "bash",
             },
             {
