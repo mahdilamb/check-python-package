@@ -1,18 +1,6 @@
 name: Check python package
 description: Check a python package and commit changes for quality
 inputs:
-  use_version_check:
-    default: 'false'
-    required: false
-    description: Whether to run the version_check task.
-  version_check_path:
-    description: The path to the file containing the version string
-    required: true
-    default: '-'
-  version_check_variable:
-    description: The variable name in the path provided.
-    required: true
-    default: __version__
   use_isort:
     default: 'false'
     required: false
@@ -29,6 +17,18 @@ inputs:
     description: The CLI args to be sent to black.
     required: true
     default: '-'
+  use_version_check:
+    default: 'false'
+    required: false
+    description: Whether to run the version_check task.
+  version_check_path:
+    description: The path to the file containing the version string
+    required: true
+    default: '-'
+  version_check_variable:
+    description: The variable name in the path provided.
+    required: true
+    default: __version__
 runs:
   using: composite
   steps:
@@ -49,7 +49,7 @@ runs:
 
       git checkout ${{ github.ref_name }}
 
-      export PYTHONPATH=${{ github.action_path }}:$PYTHONPATH && pip install ${{ github.action_path }} && python -m package_checker --github-json=''{ ${{ toJSON(github) }} }'' --use_version_check ${{ inputs.use_version_check }} --version_check_path ${{ inputs.version_check_path }} --version_check_variable ${{ inputs.version_check_variable }} --use_isort ${{ inputs.use_isort }} --isort_args ${{ inputs.isort_args }} --use_black ${{ inputs.use_black }} --black_args ${{ inputs.black_args }}'
+      export PYTHONPATH=${{ github.action_path }}:$PYTHONPATH && pip install ${{ github.action_path }} && python -m package_checker --github-json=''{ ${{ toJSON(github) }} }'' --use_isort ${{ inputs.use_isort }} --isort_args ${{ inputs.isort_args }} --use_black ${{ inputs.use_black }} --black_args ${{ inputs.black_args }} --use_version_check ${{ inputs.use_version_check }} --version_check_path ${{ inputs.version_check_path }} --version_check_variable ${{ inputs.version_check_variable }}'
     shell: bash
   - name: Commit changed files
     run: 'git status
