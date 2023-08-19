@@ -1,6 +1,5 @@
 """CLI entry point for the package checker."""
 import argparse
-import collections.abc
 import inspect
 import json
 import subprocess
