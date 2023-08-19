@@ -1,10 +1,11 @@
 """CLI entry point for the package checker."""
 import argparse
-import collections.abc
 import inspect
+import json
 import subprocess
 import typing
 from collections import defaultdict
+from typing import Annotated, Any, Sequence
 
 from loguru import logger
 
@@ -21,15 +22,13 @@ def split_arguments(info, groups):
         for arg in args:
             if (val := shared.pop(arg)) not in (None, "-"):
                 grouped[group][arg] = val
-    return shared, dict(grouped)
+    return api.Github.model_validate(shared["github_json"]), dict(grouped)
 
 
 def parser_arguments():
     """Parse arguments and return the namespace and groupings."""
     parser = argparse.ArgumentParser()
-    parser.add_argument("--default-branch")
-    parser.add_argument("--current-branch")
-    parser.add_argument("--action-yaml")
+    parser.add_argument("--github-json", type=json.loads)
     inputs = api.Tasks(**TASK_DICT).inputs()
     groups: dict[str, list[str]] = defaultdict(list)
     for name, task in TASK_DICT.items():
@@ -39,13 +38,13 @@ def parser_arguments():
                 multiple = False
                 if (
                     annotation := task.__annotations__.get(arg[len(name) + 1 :])
-                ) and typing.get_origin(annotation) == typing.Annotated:
+                ) and typing.get_origin(annotation) == Annotated:
                     multiple = hasattr(
                         annotation.__args__[0], "__origin__"
                     ) and annotation.__args__[0].__origin__ in (
                         list,
                         tuple,
-                        typing.Sequence,
+                        Sequence,
                     )
                 group.add_argument(
                     f"--{arg}",
@@ -60,19 +59,17 @@ def parser_arguments():
     return parser.parse_args(), dict(groups)
 
 
-shared, args = split_arguments(*parser_arguments())
-actions_yaml = shared.pop("action_yaml")
-
-if shared["current_branch"] == shared["default_branch"]:
+github, args = split_arguments(*parser_arguments())
+if github.ref_name == github.event.repository.default_branch:
     exit(0)
 for name, task in TASK_DICT.items():
     task_args = args[name]
     if task_args.pop("use_" + name) == "false":
         continue
-    task_arg_values = {k[len(name) + 1 :]: v for k, v in task_args.items()}
+    all_args: dict[str, Any] = {k[len(name) + 1 :]: v for k, v in task_args.items()}
     task_args = inspect.getfullargspec(task).args
-    shared_args = {k: v for k, v in shared.items() if k in task_args}
-    all_args = {**task_arg_values, **shared_args}
+    if "github_model" in task_args:
+        all_args["github_model"] = github
 
     if dependencies := task.__task_details__.get("dependencies", None):
         subprocess.call(["pip", "install"] + list(dependencies))

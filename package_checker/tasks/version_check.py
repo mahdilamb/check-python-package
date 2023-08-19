@@ -10,7 +10,7 @@ from package_checker import api
 
 @api.task()
 def main(
-    default_branch: str,
+    github_model: api.Github,
     path: Annotated[
         str, api.Input(description="The path to the file containing the version string")
     ],
@@ -25,7 +25,9 @@ def main(
     to_version = lambda cmd: pkg_resources.parse_version(
         version_pattern.findall(subprocess.check_output(cmd).decode())[0][1]
     )
-    main = to_version(["git", "show", f"{default_branch}:{path}"])
+    main = to_version(
+        ["git", "show", f"{github_model.event.repository.default_branch}:{path}"]
+    )
     current = to_version(["cat", path])
 
     if main >= current:
