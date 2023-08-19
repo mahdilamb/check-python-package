@@ -26,6 +26,7 @@ def split_arguments(info, groups):
 
 def parser_arguments():
     """Parse arguments and return the namespace and groupings."""
+    print(12312321321)
     parser = argparse.ArgumentParser()
     parser.add_argument("--default-branch")
     parser.add_argument("--current-branch")
