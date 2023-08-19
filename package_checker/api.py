@@ -7,7 +7,6 @@ from typing import (
     Annotated,
     Callable,
     Generic,
-    Literal,
     ParamSpec,
     Protocol,
     Sequence,
@@ -15,6 +14,8 @@ from typing import (
     TypeVar,
     cast,
 )
+
+import pydantic
 
 P = ParamSpec("P")
 T = TypeVar("T")
@@ -51,26 +52,7 @@ class Task(Protocol, Generic[P]):
     @typing.overload
     def __call__(
         self,
-        default_branch: str,
-        *args: P.args,
-        **kwargs: P.kwargs,
-    ):
-        """Run the task."""
-
-    @typing.overload
-    def __call__(
-        self,
-        current_branch: str,
-        *args: P.args,
-        **kwargs: P.kwargs,
-    ):
-        """Run the task."""
-
-    @typing.overload
-    def __call__(
-        self,
-        default_branch: str,
-        current_branch: str,
+        github_model: "Github",
         *args: P.args,
         **kwargs: P.kwargs,
     ):
@@ -123,7 +105,7 @@ class Tasks:
                     annotation
                 ) != Annotated:
                     annotation = Annotated[annotation, Input()]
-                if kwarg in ("default_branch", "current_branch"):
+                if kwarg == "github_model":
                     continue
 
                 if (
@@ -157,3 +139,22 @@ class Tasks:
             f"--{input} ${{{{ inputs.{input} }}}}" for input in inputs.keys()
         )
         return cli_args
+
+
+class Repository(pydantic.BaseModel):
+    """Github repository."""
+
+    default_branch: str
+
+
+class Event(pydantic.BaseModel):
+    """Github event."""
+
+    repository: Repository
+
+
+class Github(pydantic.BaseModel):
+    """Github event."""
+
+    ref_name: str
+    event: Event

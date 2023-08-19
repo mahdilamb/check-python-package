@@ -21,8 +21,7 @@ def split_arguments(info, groups):
         for arg in args:
             if (val := shared.pop(arg)) not in (None, "-"):
                 grouped[group][arg] = val
-    print(shared)
-    return shared, dict(grouped)
+    return api.Github.model_validate(shared), dict(grouped)
 
 
 def parser_arguments():
@@ -60,9 +59,8 @@ def parser_arguments():
 
 
 shared, args = split_arguments(*parser_arguments())
-actions_yaml = shared.pop("action_yaml")
 
-if shared["current_branch"] == shared["default_branch"]:
+if shared.ref_name == shared.event.repository.default_branch:
     exit(0)
 for name, task in TASK_DICT.items():
     task_args = args[name]

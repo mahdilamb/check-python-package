@@ -3,7 +3,7 @@ requires = ["setuptools", "wheel"]
 
 [project]
 authors = [{name = "Mahdi Lamb", email = "mahdilamb@gmail.com"}]
-dependencies = ["loguru", "pyyaml"]
+dependencies = ["loguru", "pyyaml", "pydantic"]
 description = "Quis custodiet ipsos custodes"
 dynamic = ["version"]
 name = "package-checker"
