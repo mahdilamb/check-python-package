@@ -60,7 +60,7 @@ def parser_arguments():
 
 
 github, args = split_arguments(*parser_arguments())
-
+print(github)
 if github.ref_name == github.event.repository.default_branch:
     exit(0)
 for name, task in TASK_DICT.items():
