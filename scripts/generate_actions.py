@@ -29,7 +29,7 @@ DATA = {
                 "name": "Run package checker",
                 "run": """git checkout ${{ github.event.repository.default_branch }}
 git checkout ${{ github.ref_name }}
-export PYTHONPATH=${{ github.action_path }}:$PYTHONPATH && pip install ${{ github.action_path }} && python -m package_checker --github-json='{ ${{ toJSON(github) }} }' """
+export PYTHONPATH=${{ github.action_path }}:$PYTHONPATH && pip install ${{ github.action_path }} && python -m package_checker --github-json='${{ toJSON(github) }}' """
                 + f"{INPUTS.cli_args()}",
                 "shell": "bash",
             },
