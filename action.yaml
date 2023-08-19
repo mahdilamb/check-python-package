@@ -13,20 +13,20 @@ inputs:
     description: The variable name in the path provided.
     required: true
     default: __version__
-  use_black:
-    default: 'false'
-    required: false
-    description: Whether to run the black task.
-  black_args:
-    description: The CLI args to be sent to black.
-    required: true
-    default: '-'
   use_isort:
     default: 'false'
     required: false
     description: Whether to run the isort task.
   isort_args:
     description: The CLI args to be sent to isort.
+    required: true
+    default: '-'
+  use_black:
+    default: 'false'
+    required: false
+    description: Whether to run the black task.
+  black_args:
+    description: The CLI args to be sent to black.
     required: true
     default: '-'
 runs:
@@ -49,7 +49,7 @@ runs:
 
       git checkout ${{ github.ref_name }}
 
-      export PYTHONPATH=${{ github.action_path }}:$PYTHONPATH && pip install ${{ github.action_path }} && python -m package_checker --github-json=''${{ toJSON(github) }}'' --use_version_check ${{ inputs.use_version_check }} --version_check_path ${{ inputs.version_check_path }} --version_check_variable ${{ inputs.version_check_variable }} --use_black ${{ inputs.use_black }} --black_args ${{ inputs.black_args }} --use_isort ${{ inputs.use_isort }} --isort_args ${{ inputs.isort_args }}'
+      export PYTHONPATH=${{ github.action_path }}:$PYTHONPATH && pip install ${{ github.action_path }} && python -m package_checker --github-json=''${{ toJSON(github) }}'' --use_version_check ${{ inputs.use_version_check }} --version_check_path ${{ inputs.version_check_path }} --version_check_variable ${{ inputs.version_check_variable }} --use_isort ${{ inputs.use_isort }} --isort_args ${{ inputs.isort_args }} --use_black ${{ inputs.use_black }} --black_args ${{ inputs.black_args }}'
     shell: bash
   - name: Commit changed files
     run: 'git status
