@@ -21,16 +21,14 @@ def split_arguments(info, groups):
         for arg in args:
             if (val := shared.pop(arg)) not in (None, "-"):
                 grouped[group][arg] = val
+    print(shared)
     return shared, dict(grouped)
 
 
 def parser_arguments():
     """Parse arguments and return the namespace and groupings."""
-    print(12312321321)
     parser = argparse.ArgumentParser()
-    parser.add_argument("--default-branch")
-    parser.add_argument("--current-branch")
-    parser.add_argument("--action-yaml")
+    parser.add_argument("--github-json")
     inputs = api.Tasks(**TASK_DICT).inputs()
     groups: dict[str, list[str]] = defaultdict(list)
     for name, task in TASK_DICT.items():

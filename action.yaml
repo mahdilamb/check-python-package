@@ -49,7 +49,7 @@ runs:
 
       git checkout ${{ github.ref_name }}
 
-      export PYTHONPATH=${{ github.action_path }}:$PYTHONPATH && pip install ${{ github.action_path }} && python -m package_checker --github-action-json=''{ ${{ toJSON(github) }} }'' --use_version_check ${{ inputs.use_version_check }} --version_check_path ${{ inputs.version_check_path }} --version_check_variable ${{ inputs.version_check_variable }} --use_isort ${{ inputs.use_isort }} --isort_args ${{ inputs.isort_args }} --use_black ${{ inputs.use_black }} --black_args ${{ inputs.black_args }}'
+      export PYTHONPATH=${{ github.action_path }}:$PYTHONPATH && pip install ${{ github.action_path }} && python -m package_checker --github-json=''{ ${{ toJSON(github) }} }'' --use_version_check ${{ inputs.use_version_check }} --version_check_path ${{ inputs.version_check_path }} --version_check_variable ${{ inputs.version_check_variable }} --use_isort ${{ inputs.use_isort }} --isort_args ${{ inputs.isort_args }} --use_black ${{ inputs.use_black }} --black_args ${{ inputs.black_args }}'
     shell: bash
   - name: Commit changed files
     run: 'git status
