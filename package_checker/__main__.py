@@ -21,7 +21,7 @@ def split_arguments(info, groups):
         for arg in args:
             if (val := shared.pop(arg)) not in (None, "-"):
                 grouped[group][arg] = val
-    return api.Github.model_validate(shared), dict(grouped)
+    return api.Github.model_validate(shared["github_json"]), dict(grouped)
 
 
 def parser_arguments():
