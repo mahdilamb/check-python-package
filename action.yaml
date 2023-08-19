@@ -41,19 +41,19 @@ runs:
   - uses: actions/checkout@v3
     with:
       ref: ${{ github.ref_name }}
+  - name: Configure git
+    run: 'git config user.name github-actions;
+
+      git config user.email github-actions@github.com;'
   - name: Run package checker
     run: 'git checkout ${{ github.event.repository.default_branch }}
 
       git checkout ${{ github.ref_name }}
 
-      export PYTHONPATH=${{ github.action_path }}:$PYTHONPATH && pip install ${{ github.action_path }} && python -m package_checker --default-branch=${{ github.event.repository.default_branch }} --current-branch=${{ github.ref_name }} --action-yaml=${{ github.action_path }}/action.yaml --use_version_check ${{ inputs.use_version_check }} --version_check_path ${{ inputs.version_check_path }} --version_check_variable ${{ inputs.version_check_variable }} --use_black ${{ inputs.use_black }} --black_args ${{ inputs.black_args }} --use_isort ${{ inputs.use_isort }} --isort_args ${{ inputs.isort_args }}'
+      export PYTHONPATH=${{ github.action_path }}:$PYTHONPATH && pip install ${{ github.action_path }} && python -m package_checker --github-action-json=''{ ${{ toJSON(github) }} }'' --use_version_check ${{ inputs.use_version_check }} --version_check_path ${{ inputs.version_check_path }} --version_check_variable ${{ inputs.version_check_variable }} --use_black ${{ inputs.use_black }} --black_args ${{ inputs.black_args }} --use_isort ${{ inputs.use_isort }} --isort_args ${{ inputs.isort_args }}'
     shell: bash
   - name: Commit changed files
     run: 'git status
-
-      git config user.name github-actions;
-
-      git config user.email github-actions@github.com;
 
       $(git add . && git commit -m "Auto update files" && git push --set-upstream origin ${{ github.ref_name }} ) || echo "Nothing to change"
 
