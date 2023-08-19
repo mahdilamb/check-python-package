@@ -1,9 +1,10 @@
-
+"""Test that we can load Github event from json"""
 import json
 from package_checker import api
 
 
 def github_model_test():
+    """Test a random string."""
     json_string = """{
 		"token": "***",
 		"job": "prepare",
